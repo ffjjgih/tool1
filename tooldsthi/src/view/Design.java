@@ -2,6 +2,7 @@ package view;
 
 import DAOduan.DAOkehoach;
 import DAOduan.DAOkehoachthiimprements;
+import Model.Inputkehoachthi;
 import Service.Multithread;
 import Service.checksv;
 import java.awt.datatransfer.DataFlavor;
@@ -9,6 +10,7 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,11 +20,12 @@ import javax.swing.JOptionPane;
 import javax.swing.TransferHandler;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-public class Design extends javax.swing.JFrame {
+public class Design extends javax.swing.JFrame implements Runnable{
 
     private checksv check = new checksv();
     private String namefile,tenfile;
     private List<File> file;
+    private ArrayList<Inputkehoachthi> dskht=new ArrayList<>();
     private DAOkehoach lst=new DAOkehoachthiimprements();
 
     public Design() {
@@ -31,38 +34,25 @@ public class Design extends javax.swing.JFrame {
         drag_and_drop_file();
 
     }
-    private int count = 0;
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         btnloai1 = new javax.swing.JButton();
-        jLabel3 = new javax.swing.JLabel();
-        txtlanthi = new javax.swing.JTextField();
         pnlfile = new javax.swing.JPanel();
-        cbbblock = new javax.swing.JComboBox<>();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        cbbmon = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         btnloai1.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         btnloai1.setText("upload file điểm");
+        btnloai1.setEnabled(false);
         btnloai1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnloai1ActionPerformed(evt);
-            }
-        });
-
-        jLabel3.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
-        jLabel3.setText("Lần Thi");
-
-        txtlanthi.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
-        txtlanthi.setText("1");
-        txtlanthi.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtlanthiActionPerformed(evt);
             }
         });
 
@@ -78,9 +68,6 @@ public class Design extends javax.swing.JFrame {
             pnlfileLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 421, Short.MAX_VALUE)
         );
-
-        cbbblock.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
-        cbbblock.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Block 1", "Block 2" }));
 
         jButton1.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         jButton1.setText("upload file kế hoạch thi");
@@ -98,6 +85,9 @@ public class Design extends javax.swing.JFrame {
             }
         });
 
+        cbbmon.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        cbbmon.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "môn online", "môn quiz", "điểm danh" }));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -107,33 +97,26 @@ public class Design extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(pnlfile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtlanthi, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(cbbblock, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 76, Short.MAX_VALUE)
-                        .addComponent(btnloai1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(cbbmon, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE))
+                        .addGap(126, 126, 126)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnloai1, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnloai1, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtlanthi, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(cbbblock, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel3)))
+                    .addComponent(cbbmon))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(pnlfile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -147,15 +130,10 @@ public class Design extends javax.swing.JFrame {
         namefile=nameten[0];
         tenfile=nameten[1];
         try {
-            check.ktramondauvao(namefile);
+            check.ktramondauvao(namefile,this.cbbmon.getSelectedItem().toString());
             JOptionPane.showMessageDialog(this, "đọc file thành công");
             try {
-                if (check.xuatdssvthi() < 27) {
-                    count = 2;
-                } else {
-                    count = 3;
-                }
-                check.xuatdssthi(namefile.replace(tenfile, ""), this.txtlanthi.getText(),this.cbbblock.getSelectedItem().toString());
+                check.xuatdssthi(namefile.replace(tenfile, ""),dskht);
                 JOptionPane.showMessageDialog(this, "lưu file thành công");
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -170,16 +148,14 @@ public class Design extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btnloai1ActionPerformed
 
-    private void txtlanthiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtlanthiActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtlanthiActionPerformed
-
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         String filekehoachthi[]=chonfile().split("/");
         String a=filekehoachthi[0];
         try {
             lst.docexcel(a);
+            dskht.addAll(lst.xuatdskht());
             JOptionPane.showMessageDialog(this, "đọc file thành công");
+            this.btnloai1.setEnabled(true);
         } catch (Exception ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "đọc file thất bại");
@@ -201,8 +177,7 @@ public class Design extends javax.swing.JFrame {
 
     private String chonfile() {
         JFileChooser jfc = new JFileChooser();
-        FileNameExtensionFilter fnef = new FileNameExtensionFilter(".xlsx", ".xlsm", ".xls");
-        jfc.setFileFilter(fnef);
+        jfc.setSize(13766, 7666);
         jfc.setMultiSelectionEnabled(false);
         int ktr = jfc.showDialog(this, "chọn file");
         if (ktr == JFileChooser.APPROVE_OPTION) {
@@ -211,17 +186,6 @@ public class Design extends javax.swing.JFrame {
             tenfile=f.getName();
         }
         return namefile+"/"+tenfile;
-    }
-
-    private String savefile() {
-        JFileChooser jfc = new JFileChooser();
-        jfc.setMultiSelectionEnabled(false);
-        int ktr = jfc.showDialog(this, "save");
-        if (ktr == JFileChooser.APPROVE_OPTION) {
-            File f = jfc.getSelectedFile();
-            namefile = f.getAbsolutePath();
-        }
-        return namefile;
     }
 
     private void drag_and_drop_file() {
@@ -242,9 +206,7 @@ public class Design extends javax.swing.JFrame {
                     }
                 return true;
             }
-
         };
-        
         pnlfile.setTransferHandler(th);
     }
     
@@ -252,15 +214,17 @@ public class Design extends javax.swing.JFrame {
         for(File  x:f){
             namefile=x.getAbsolutePath();
             tenfile=x.getName();
-        Multithread daluong;
+            Thread t=new Thread(this);
+            t.start();
+        /*Multithread daluong;
             try {
-                daluong = new Multithread(namefile,namefile.replace(tenfile, ""),txtlanthi.getText(),this.cbbblock.getSelectedItem().toString());
+                daluong = new Multithread(namefile,namefile.replace(tenfile, ""),this.cbbmon.getSelectedItem().toString(),dskht);
                 Thread t=new Thread(daluong);
                         t.start();
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "không đọc đc file: "+tenfile);
                 ex.printStackTrace();
-            }              
+            }*/              
         }
     }
     public static void main(String args[]) {
@@ -297,11 +261,21 @@ public class Design extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnloai1;
-    private javax.swing.JComboBox<String> cbbblock;
+    private javax.swing.JComboBox<String> cbbmon;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel pnlfile;
-    private javax.swing.JTextField txtlanthi;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void run() {
+        try {
+            check.ktramondauvao(namefile,this.cbbmon.getSelectedItem().toString());
+            check.xuatdssthi(namefile.replace(tenfile, ""),dskht);
+            JOptionPane.showMessageDialog(this, "upload "+tenfile+" thành công");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "upload "+tenfile+" thất bại");
+        }
+    }
 }

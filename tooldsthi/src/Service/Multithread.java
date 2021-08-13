@@ -5,6 +5,8 @@
  */
 package Service;
 
+import Model.Inputkehoachthi;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,20 +16,21 @@ import java.util.logging.Logger;
  */
 public class Multithread implements Runnable{
     private checksv sv=new checksv();
-    private String namefile,savefile,lanthi,block;
-    public Multithread(String namefile,String savefile,String lanthi,String block)throws Exception{
+    private String namefile,savefile,loaimon;
+    private ArrayList<Inputkehoachthi>ds;
+    public Multithread(String namefile,String savefile,String loaimon,ArrayList<Inputkehoachthi> ds)throws Exception{
         this.namefile=namefile;
         this.savefile=savefile;
-        this.lanthi=lanthi;
-        this.block=block;
+        this.loaimon=loaimon;
+        this.ds=ds;
     }
 
     
     @Override
     public void run(){
         try {
-            sv.ktramondauvao(namefile);
-            sv.xuatdssthi(savefile, lanthi,block);
+            sv.ktramondauvao(namefile,loaimon);
+            sv.xuatdssthi(savefile,ds);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

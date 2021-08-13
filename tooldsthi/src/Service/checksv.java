@@ -2,6 +2,7 @@ package Service;
 
 import DAOduan.DAOkehoach;
 import DAOduan.DAOkehoachthiimprements;
+import Model.Inputkehoachthi;
 import Model.Sinhvien;
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,12 +41,10 @@ public class checksv {
         return iterator;
     }
 
-    public void ktramondauvao(String namefile) throws Exception {
+    private void mononl(String namefile) throws Exception {
         List<Integer> dscolumndiem = new ArrayList<>();
         XSSFSheet sheet = createSheet(namefile);
         Iterator<Row> iterator = createiterator(sheet);
-        sheet.getRow(6).forEach(cell -> {
-            if (cell.getStringCellValue().equalsIgnoreCase("Bài học online")) {
                 sheet.getRow(6).forEach(cellonl -> {
                     if (cellonl.getStringCellValue().equalsIgnoreCase("MSSV") || cellonl.getStringCellValue().equalsIgnoreCase("Họ và tên")
                             || cellonl.getStringCellValue().equalsIgnoreCase("Bài học online") || cellonl.getStringCellValue().equalsIgnoreCase("Trạng thái")) {
@@ -59,18 +58,13 @@ public class checksv {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-            } else if (cell.getStringCellValue().equalsIgnoreCase("Quiz online")) {
+    }
 
-            }
-        });
-
-        if (lstsv.size() == 0) {
-            sheet.getRow(6).forEach(cellcheck -> {
-                if (cellcheck.getStringCellValue().equalsIgnoreCase("Quiz online 1") || cellcheck.getStringCellValue().equalsIgnoreCase("Quiz online 2")
-                        || cellcheck.getStringCellValue().equalsIgnoreCase("Quiz online 3") || cellcheck.getStringCellValue().equalsIgnoreCase("Quiz online 4")
-                        || cellcheck.getStringCellValue().equalsIgnoreCase("Quiz online 5") || cellcheck.getStringCellValue().equalsIgnoreCase("Quiz online 6")
-                        || cellcheck.getStringCellValue().equalsIgnoreCase("Quiz online 7") || cellcheck.getStringCellValue().equalsIgnoreCase("Quiz online 8")) {
-                    sheet.getRow(6).forEach(cellquiz -> {
+    private void monquiz(String namefile)throws Exception{
+        List<Integer> dscolumndiem = new ArrayList<>();
+        XSSFSheet sheet = createSheet(namefile);
+        Iterator<Row> iterator = createiterator(sheet);
+        sheet.getRow(6).forEach(cellquiz -> {
                         if (cellquiz.getStringCellValue().equalsIgnoreCase("MSSV") || cellquiz.getStringCellValue().equalsIgnoreCase("Họ và tên")
                                 || cellquiz.getStringCellValue().equalsIgnoreCase("Quiz online 1") || cellquiz.getStringCellValue().equalsIgnoreCase("Quiz online 2")
                                 || cellquiz.getStringCellValue().equalsIgnoreCase("Quiz online 3") || cellquiz.getStringCellValue().equalsIgnoreCase("Quiz online 4")
@@ -87,48 +81,42 @@ public class checksv {
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
-
-                }
-            });
-
-        }
-
-        if (lstsv.size() == 0) {
-            sheet.getRow(6).forEach(cellonl -> {
+    }
+    private void monloai3(String namefile)throws Exception{
+        List<Integer> dscolumndiem = new ArrayList<>();
+        XSSFSheet sheet = createSheet(namefile);
+        Iterator<Row> iterator = createiterator(sheet);
+        sheet.getRow(6).forEach(cellonl -> {
                 if (cellonl.getStringCellValue().equalsIgnoreCase("MSSV") || cellonl.getStringCellValue().equalsIgnoreCase("Họ và tên")
                         || cellonl.getStringCellValue().equalsIgnoreCase("Trạng thái")) {
                     dscolumndiem.add(cellonl.getColumnIndex());
                 }
             });
             try {
-
                 lstsv = ds.docexceldiemdanh(iterator, dscolumndiem);
                 checkmondiemdanh(lstsv);
                 mafile = ds.tenfilethi().trim();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-        }
     }
-
+    
     private void checkdiemonl(ArrayList<Sinhvien> lst) {
         for (int i = 0; i < lst.size(); i++) {
             if (lst.get(i).getDiemonl() < 7.5 || lst.get(i).getTinhtrang().equalsIgnoreCase("Attendance failed")) {
-                lstcamthi.add(new Sinhvien(lst.get(i).getDiemonl(), lst.get(i).getTensv(), lst.get(i).getMasv(), "cấm thi"));
+                lstcamthi.add(new Sinhvien(lst.get(i).getDiemonl(), lst.get(i).getTensv(), lst.get(i).getMasv(), "cấm thi",lst.get(i).getLop(),lst.get(i).getMonhoc()));
             } else {
-                lstthi.add(new Sinhvien(lst.get(i).getDiemonl(), lst.get(i).getTensv(), lst.get(i).getMasv(), ""));
+                lstthi.add(new Sinhvien(lst.get(i).getDiemonl(), lst.get(i).getTensv(), lst.get(i).getMasv(), "",lst.get(i).getLop(),lst.get(i).getMonhoc()));
             }
         }
-        System.out.println(lstthi.size());
     }
 
     private void checkdiemquiz(ArrayList<Sinhvien> ds) {
         for (int i = 0; i < ds.size(); i++) {
             if (ds.get(i).getDiemonl() < 80 || ds.get(i).getTinhtrang().equalsIgnoreCase("Attendance failed")) {
-                lstcamthi.add(new Sinhvien(ds.get(i).getDiemonl(), ds.get(i).getTensv(), ds.get(i).getMasv(), "cấm thi"));
+                lstcamthi.add(new Sinhvien(ds.get(i).getDiemonl(), ds.get(i).getTensv(), ds.get(i).getMasv(), "cấm thi",ds.get(i).getLop(),ds.get(i).getMonhoc()));
             } else {
-                lstthi.add(new Sinhvien(ds.get(i).getDiemonl(), ds.get(i).getTensv(), ds.get(i).getMasv(), ""));
+                lstthi.add(new Sinhvien(ds.get(i).getDiemonl(), ds.get(i).getTensv(), ds.get(i).getMasv(), "",ds.get(i).getLop(),ds.get(i).getMonhoc()));
             }
         }
     }
@@ -136,9 +124,9 @@ public class checksv {
     private void checkmondiemdanh(ArrayList<Sinhvien> ds) {
         for (int i = 0; i < ds.size(); i++) {
             if (ds.get(i).getTinhtrang().equalsIgnoreCase("Attendance failed")) {
-                lstcamthi.add(new Sinhvien(ds.get(i).getDiemonl(), ds.get(i).getTensv(), ds.get(i).getMasv(), "cấm thi"));
+                lstcamthi.add(new Sinhvien(ds.get(i).getDiemonl(), ds.get(i).getTensv(), ds.get(i).getMasv(), "cấm thi",ds.get(i).getLop(),ds.get(i).getMonhoc()));
             } else {
-                lstthi.add(new Sinhvien(ds.get(i).getDiemonl(), ds.get(i).getTensv(), ds.get(i).getMasv(), ""));
+                lstthi.add(new Sinhvien(ds.get(i).getDiemonl(), ds.get(i).getTensv(), ds.get(i).getMasv(), "",ds.get(i).getLop(),ds.get(i).getMonhoc()));
             }
         }
     }
@@ -150,23 +138,31 @@ public class checksv {
                 }
     }
 
-    public void xuatdssthi(String namefile, String lanthi,String block) throws Exception {
+    public void xuatdssthi(String namefile,ArrayList<Inputkehoachthi> dskht) throws Exception {
         checksophong();
         String linkfolder=namefile+"danhsachthi/";
-       System.out.println(linkfolder);
+        System.out.println(dskht.size());
        File f = new File(linkfolder);
        if(f.exists()){
-           ds.xuatdssthifileword(f.getAbsolutePath() + "/"+mafile + ".docx", count, lstthi);
-        ds.xuatlichthi(f.getAbsolutePath() + "/"+mafile +".xlsx", lanthi, count, lstthi, lstcamthi,block);
+           ds.checklichthi(f.getAbsolutePath() + "/"+mafile +".xlsx", count, lstthi, lstcamthi,dskht);
+        ds.checklichthi(f.getAbsolutePath() + "/"+mafile +".xlsx", count, lstthi, lstcamthi,dskht);
        }else{
            if(f.mkdir()){
-               ds.xuatdssthifileword(f.getAbsolutePath() +"/"+ mafile + ".docx", count, lstthi);
-               ds.xuatlichthi(f.getAbsolutePath() + "/"+mafile + ".xlsx", lanthi, count, lstthi, lstcamthi,block);
+               ds.checklichthi(f.getAbsolutePath() + "/"+mafile +".xlsx", count, lstthi, lstcamthi,dskht);
            }
        }
     }
     public int xuatdssvthi() {
         return this.lstthi.size();
     }
-
+    
+    public void ktramondauvao(String namefile,String loaimon)throws Exception{
+        if(loaimon.equalsIgnoreCase("môn online")){
+            mononl(namefile);
+        }else if(loaimon.equalsIgnoreCase("môn quiz")){
+            monquiz(namefile);
+        }else{
+            monloai3(namefile);
+        }
+    }
 }
