@@ -11,17 +11,36 @@ package Model;
  */
 public class Sinhvien {
     private double diemonl;
-    private String tensv,masv,tinhtrang;
+    private String tensv,masv,tinhtrang,lop,monhoc;
     public Sinhvien() {
     }
 
-    public Sinhvien(double diemonl, String tensv, String masv,String tinhtrang) {
+    public Sinhvien(double diemonl, String tensv, String masv,String tinhtrang,String lop,String monhoc) {
         this.diemonl = diemonl;
         this.tensv = tensv;
         this.masv = masv;
         this.tinhtrang=tinhtrang;
+        this.lop=lop;
+        this.monhoc=monhoc;
     }
 
+    public void setLop(String lop) {
+        this.lop = lop;
+    }
+
+    public String getLop() {
+        return lop;
+    }
+
+    public String getMonhoc() {
+        return monhoc;
+    }
+
+    public void setMonhoc(String monhoc) {
+        this.monhoc = monhoc;
+    }
+
+    
     
     public void setDiemonl(double diemonl) {
         this.diemonl = diemonl;

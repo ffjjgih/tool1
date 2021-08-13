@@ -5,6 +5,7 @@
  */
 package DAOduan;
 
+import Model.Inputkehoachthi;
 import Model.Sinhvien;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -19,19 +20,19 @@ public interface DAOkehoach {
 
     public void docexcel(String namefile) throws Exception;
 
-    public void luudb() throws Exception;
-
     public ArrayList<Sinhvien> docexcelloai1(Iterator<Row> iterquiz,List<Integer> lstcell) throws Exception;
 
-    public void xuatlichthi(String namefile, String lanthi, int count,ArrayList<Sinhvien> svthi,ArrayList<Sinhvien> svcthi,String block) throws Exception;
-
-    public void xuatkehoachthi(String lop, String ma) throws Exception;
+    public void xuatlichthi(String namefile, int count,ArrayList<Sinhvien> svthi,ArrayList<Sinhvien> svcthi,ArrayList<Inputkehoachthi>dskht) throws Exception;
 
     public ArrayList<Sinhvien> docexcelloai2(Iterator<Row> iterquiz,List<Integer> lstcell) throws Exception;
     
     public ArrayList<Sinhvien> docexceldiemdanh(Iterator<Row> iterquiz,List<Integer> lstcell) throws Exception;
     
-    public void xuatdssthifileword(String namefile,int count,ArrayList<Sinhvien> svthi) throws Exception;
+    public ArrayList<Inputkehoachthi> xuatdskht();
+    
+    public ArrayList<Sinhvien> xuatdssv();
+    
+    public void checklichthi(String namefile,  int count,ArrayList<Sinhvien> svthi,ArrayList<Sinhvien> svcthi,ArrayList<Inputkehoachthi>dskht)throws Exception;
     
     public void xuatfileonlmau(String name)throws Exception;
     public void xuatfilequizmau(String name)throws Exception;

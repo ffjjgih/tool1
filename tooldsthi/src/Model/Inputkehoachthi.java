@@ -13,21 +13,40 @@ import java.util.Date;
  */
 public class Inputkehoachthi {
     private int id,cathi;
-    private String mamon,phongthi,lop;
+    private String mamon,phongthi,lop,loaithi,block;
     private Date ngaythi;
 
     public Inputkehoachthi() {
     }
 
-    public Inputkehoachthi(int id, int cathi, String mamon, String phongthi, String lop, Date ngaythi) {
+    public Inputkehoachthi(int id, int cathi, String mamon, String phongthi, String lop, Date ngaythi,String loaithi,String block) {
         this.id = id;
         this.cathi = cathi;
         this.mamon = mamon;
         this.phongthi = phongthi;
         this.lop = lop;
         this.ngaythi = ngaythi;
+        this.loaithi=loaithi;
+        this.block=block;
     }
 
+    public void setBlock(String block) {
+        this.block = block;
+    }
+
+    public void setLoaithi(String loaithi) {
+        this.loaithi = loaithi;
+    }
+
+    public String getBlock() {
+        return block;
+    }
+
+    public String getLoaithi() {
+        return loaithi;
+    }
+
+    
     public void setId(int id) {
         this.id = id;
     }
