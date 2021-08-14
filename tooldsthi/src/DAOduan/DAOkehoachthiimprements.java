@@ -3,6 +3,7 @@ package DAOduan;
 import Model.Inputkehoachthi;
 import Model.Sinhvien;
 import Sqlserver.Connect;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.sql.Connection;
@@ -29,61 +30,58 @@ public class DAOkehoachthiimprements implements DAOkehoach {
     private ArrayList<Sinhvien> lstsv;
     String lop = null, mamon, ma1, ma, mua, tenfileluu;
 
-    private static Connect getconnect;
     private Cell cell;
-    private ArrayList<Integer> lstrow = new ArrayList<>();
-    private ArrayList<Integer> lstcountsv = new ArrayList<>();
-
-    public static Connection getconnection() throws Exception {
-        Connection con = getconnect.getConnection();
-        return con;
-    }
+    private ArrayList<Integer> lstrow ;
+    private ArrayList<Integer> lstcountsv;
 
     public DAOkehoachthiimprements() {
         this.lstkht = new ArrayList<>();
         this.lstsv = new ArrayList<>();
+        this.lstrow= new ArrayList<>();
+        this.lstcountsv = new ArrayList<>();
     }
 
     @Override
     public void docexcel(String namefile) throws Exception {
-            String mamon, mamonhoc, phongthi, loaithi, block;
-            java.util.Date ngay = null;
-            int cathi;
-            FileInputStream excel = new FileInputStream(namefile);
-            XSSFWorkbook workbook = new XSSFWorkbook(excel);
-            XSSFSheet sheet = workbook.getSheet("KH thi Block 2");
-            Iterator<Row> iterator = sheet.iterator();
-            while (iterator.hasNext()) {
-                Inputkehoachthi kht = new Inputkehoachthi();
-                Row row = iterator.next();
-                if (row.getRowNum() > 3) {
-                    if (row.getCell(6).getCellType() == CellType.STRING) {
-                        mamonhoc = row.getCell(6).getStringCellValue();
-                        kht.setMamon(mamonhoc);
-                    } else {
-                        mamonhoc = row.getCell(6).getNumericCellValue() + "";
-                        kht.setMamon(mamonhoc);
-                    }
-                    phongthi = row.getCell(3).getStringCellValue();
-                    ngay = row.getCell(1).getDateCellValue();
-                    cathi = (int) row.getCell(2).getNumericCellValue();
-                    mamon = row.getCell(10).getStringCellValue();
-                    loaithi = row.getCell(8).getStringCellValue();
-                    block = row.getCell(18).getStringCellValue();
-                    if (mamonhoc.length() > 0 && phongthi.length() > 0 && cathi > 0 && mamon.length() > 0) {
-                        lstkht.add(new Inputkehoachthi(0, cathi, mamonhoc, phongthi, mamon, ngay, loaithi, block));
-
-                    }
+        
+        String mamon, mamonhoc, phongthi, loaithi, block;
+        java.util.Date ngay = null;
+        int cathi;
+        FileInputStream excel = new FileInputStream(namefile);
+        XSSFWorkbook workbook = new XSSFWorkbook(excel);
+        XSSFSheet sheet = workbook.getSheet("KH thi Block 2");
+        Iterator<Row> iterator = sheet.iterator();
+        while (iterator.hasNext()) {
+            Inputkehoachthi kht = new Inputkehoachthi();
+            Row row = iterator.next();
+            if (row.getRowNum() > 3) {
+                if (row.getCell(6).getCellType() == CellType.STRING) {
+                    mamonhoc = row.getCell(6).getStringCellValue();
+                    kht.setMamon(mamonhoc);
+                } else {
+                    mamonhoc = row.getCell(6).getNumericCellValue() + "";
+                    kht.setMamon(mamonhoc);
                 }
-            }xuatdskht();
-            System.out.println(lstkht.size());
-            workbook.close();
-            excel.close();
+                phongthi = row.getCell(3).getStringCellValue();
+                ngay = row.getCell(1).getDateCellValue();
+                cathi = (int) row.getCell(2).getNumericCellValue();
+                mamon = row.getCell(10).getStringCellValue();
+                loaithi = row.getCell(8).getStringCellValue();
+                block = row.getCell(18).getStringCellValue();
+                if (mamonhoc.length() > 0 && phongthi.length() > 0 && cathi > 0 && mamon.length() > 0) {
+                    lstkht.add(new Inputkehoachthi(0, cathi, mamonhoc, phongthi, mamon, ngay, loaithi, block));
+                }
+            }
+        }
+        xuatdskht();
+        workbook.close();
+        excel.close();
     }
 
     @Override
     public ArrayList<Sinhvien> docexcelloai1(Iterator<Row> iterquiz, List<Integer> lstcell) throws Exception {
         try {
+            lstsv.removeAll(lstsv);
             while (iterquiz.hasNext()) {
                 Row row = iterquiz.next();
                 Sinhvien mh1 = new Sinhvien();
@@ -99,7 +97,6 @@ public class DAOkehoachthiimprements implements DAOkehoach {
                 }
                 if (row.getRowNum() > 7) {
                     while (celliter.hasNext()) {
-
                         cell = celliter.next();
                         if (cell.getColumnIndex() == lstcell.get(0)) {
                             mh1.setMasv(row.getCell(lstcell.get(0)).getStringCellValue());
@@ -126,13 +123,11 @@ public class DAOkehoachthiimprements implements DAOkehoach {
     }
 
     @Override
-    public void xuatlichthi(String namefile, int count, ArrayList<Sinhvien> svthi, ArrayList<Sinhvien> svcthi,ArrayList<Inputkehoachthi>dskht) throws Exception {
+    public void xuatlichthi(String namefile, int count, ArrayList<Sinhvien> svthi, ArrayList<Sinhvien> svcthi, ArrayList<Inputkehoachthi> dskht) throws Exception {
         FileOutputStream fos = new FileOutputStream(namefile);
         XSSFWorkbook xssfw = new XSSFWorkbook();
         XSSFRow row, row1, row2, row3, row4, row5, row6;
         XSSFCell cellB, cellC, cellD, cellE, cellF, cellG, cellH;
-        ArrayList<Sinhvien> lstsvkdt = new ArrayList<>();
-        lstsvkdt.addAll(svcthi);
         XSSFSheet sheet = xssfw.createSheet(ngaythi(dskht.get(0).getNgaythi()));
         int vitisv, slsv1cathi;
         for (int j = 0; j <= count; j++) {
@@ -157,7 +152,6 @@ public class DAOkehoachthiimprements implements DAOkehoach {
             row4 = sheet.createRow((short) 3);
             row5 = sheet.createRow((short) 4);
             row6 = sheet.createRow((short) 6);
-
             cellB = row6.createCell((short) 0);
             cellB.setCellStyle(style);
             cellB.setCellValue("TT");
@@ -220,7 +214,6 @@ public class DAOkehoachthiimprements implements DAOkehoach {
                     cellH.setCellStyle(style);
                 }
             }
-
             if (count == j) {
                 for (int i = 0; i < svcthi.size(); i++) {
                     row = sheet.createRow((short) i + 7);
@@ -237,6 +230,9 @@ public class DAOkehoachthiimprements implements DAOkehoach {
                 }
             }
         }
+        
+        lstcountsv.removeAll(lstcountsv);
+        lstrow.removeAll(lstrow);
         xssfw.write(fos);
         xssfw.close();
         fos.close();
@@ -245,6 +241,7 @@ public class DAOkehoachthiimprements implements DAOkehoach {
     @Override
     public ArrayList<Sinhvien> docexcelloai2(Iterator<Row> iterquiz, List<Integer> lstcell) throws Exception {
         double countquiz = 0;
+        lstsv.removeAll(lstsv);
         while (iterquiz.hasNext()) {
             Row row = iterquiz.next();
             Sinhvien mh1 = new Sinhvien();
@@ -317,8 +314,8 @@ public class DAOkehoachthiimprements implements DAOkehoach {
         String ngayDate = sdf.format(ngay);
         return ngayDate;
     }
-    
-    private String ngay(Date ngay){
+
+    private String ngay(Date ngay) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd - MM - yyyy");
         String ngayDate = sdf.format(ngay);
         return ngayDate;
@@ -337,7 +334,6 @@ public class DAOkehoachthiimprements implements DAOkehoach {
         } else if (i == 1) {
             if (count == 1) {
                 if (svddk.size() > 24) {
-
                     lstcountsv.add(13);
                     lstrow.add(svddk.size() - 12);
                 } else {
@@ -370,13 +366,13 @@ public class DAOkehoachthiimprements implements DAOkehoach {
 
     @Override
     public ArrayList<Sinhvien> docexceldiemdanh(Iterator<Row> iterquiz, List<Integer> lstcell) throws Exception {
+        lstsv.removeAll(lstsv);
         while (iterquiz.hasNext()) {
             Row row = iterquiz.next();
             Sinhvien mh1 = new Sinhvien();
             Iterator<Cell> celliter = row.cellIterator();
             if (row.getRowNum() == 2) {
                 lop = row.getCell(3).getStringCellValue();
-                System.out.println(lop);
             }
             if (row.getRowNum() == 3) {
                 mamon = row.getCell(3).getStringCellValue().trim();
@@ -414,7 +410,7 @@ public class DAOkehoachthiimprements implements DAOkehoach {
 
     @Override
     public void xuatfilemau(String name) throws Exception {
-        FileOutputStream excel = new FileOutputStream(name + "/mau" + ".xlsx");
+        FileOutputStream excel = new FileOutputStream(name + System.getProperty("file.separator") + "mau.xlsx");
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("sheet 1");
         XSSFCellStyle style = workbook.createCellStyle();
@@ -450,7 +446,7 @@ public class DAOkehoachthiimprements implements DAOkehoach {
         sheet.setColumnWidth(2, 4000);
         sheet.setRowSumsRight(true);
         style.setFont(f);
-        XSSFRow row1, row2, row3, row4, row5,row6;
+        XSSFRow row1, row2, row3, row4, row5, row6;
         XSSFCell cellB, cellC, cellD, cellE, cellF, cellG, cellH, cellj, cellk, celll, cellr, cellq, celln, cellm,
                 cellx, cellz, cellv, cellp, cello, celli, cellu, celly, cellt, cellxq, cellxr, cellxeCell, cellxt;
         row1 = sheet.createRow((short) 1);
@@ -460,17 +456,17 @@ public class DAOkehoachthiimprements implements DAOkehoach {
         row2 = sheet.createRow((short) 2);
         cellB = row2.createCell((short) 2);
         cellB.setCellValue("Lớp:");
-        cellC=row2.createCell((short)3);
+        cellC = row2.createCell((short) 3);
         cellC.setCellValue("IT16305");
         row3 = sheet.createRow((short) 3);
         cellB = row3.createCell((short) 2);
         cellB.setCellValue("Môn:");
-        cellC=row3.createCell((short)3);
+        cellC = row3.createCell((short) 3);
         cellC.setCellValue("(Sof302)");
         row4 = sheet.createRow((short) 4);
         cellB = row4.createCell((short) 2);
         cellB.setCellValue("Kỳ:");
-        cellC=row4.createCell((short)3);
+        cellC = row4.createCell((short) 3);
         cellC.setCellValue("Summer 2021");
         row5 = sheet.createRow((short) 6);
         cellB = row5.createCell((short) 0);
@@ -518,9 +514,9 @@ public class DAOkehoachthiimprements implements DAOkehoach {
         cellj = row5.createCell((short) 14);
         cellj.setCellValue("Lab 4");
         cellj.setCellStyle(style);
-        cellH = row5.createCell((short) 15);
-        cellH.setCellValue("Lab 5");
-        cellH.setCellStyle(style);
+        cellxeCell = row5.createCell((short) 15);
+        cellxeCell.setCellValue("Lab 5");
+        cellxeCell.setCellStyle(style);
         cellk = row5.createCell((short) 16);
         cellk.setCellValue("Lab 6");
         cellk.setCellStyle(style);
@@ -545,14 +541,12 @@ public class DAOkehoachthiimprements implements DAOkehoach {
         cellm = row5.createCell((short) 23);
         cellm.setCellValue("Điểm tổng kết");
         cellm.setCellStyle(style);
-        celln = row5.createCell((short) 24);
-        celln.setCellValue("Trạng thái");
-        row6=sheet.createRow((short)7);
-        cellB=row6.createCell((short)0);
-        cellB.setCellValue("nhập dữ liệu bắt đầu từ dòng dưới");
-        workbook.write(excel);
-        celln.setCellStyle(style2);
-
+        cellxr = row5.createCell((short) 24);
+        cellxr.setCellValue("Trạng thái");
+        cellxr.setCellStyle(style2);
+        row6 = sheet.createRow((short) 7);
+        cellxq = row6.createCell((short) 0);
+        cellxq.setCellValue("nhập dữ liệu bắt đầu từ dòng dưới");
         workbook.write(excel);
         workbook.close();
         excel.close();
@@ -560,7 +554,7 @@ public class DAOkehoachthiimprements implements DAOkehoach {
 
     @Override
     public void xuatfileonlmau(String name) throws Exception {
-        FileOutputStream excel = new FileOutputStream(name + "/maudiemonl" + ".xlsx");
+        FileOutputStream excel = new FileOutputStream(name + System.getProperty("file.separator") + "maudiemonl.xlsx");
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("sheet 1");
         XSSFCellStyle style = workbook.createCellStyle();
@@ -596,8 +590,8 @@ public class DAOkehoachthiimprements implements DAOkehoach {
         sheet.setColumnWidth(2, 4000);
         sheet.setRowSumsRight(true);
         style.setFont(f);
-        XSSFRow row1, row2, row3, row4, row5,row6;
-        XSSFCell cellB, cellC, cellD, cellE, cellF, cellG, cellH, cellj, cellk, celll, cellr, cellq, celln, cellm;
+        XSSFRow row1, row2, row3, row4, row5, row6;
+        XSSFCell cellB, cellC, cellD, cellE, cellF, cellG, cellH, cellj, cellk, celll, cellr, cellq, celln, cellm,cellre;
         row1 = sheet.createRow((short) 1);
         cellB = row1.createCell((short) 3);
         cellB.setCellValue("Sổ Điểm");
@@ -605,17 +599,17 @@ public class DAOkehoachthiimprements implements DAOkehoach {
         row2 = sheet.createRow((short) 2);
         cellB = row2.createCell((short) 2);
         cellB.setCellValue("Lớp:");
-        cellC=row2.createCell((short)3);
+        cellC = row2.createCell((short) 3);
         cellC.setCellValue("IT16305");
         row3 = sheet.createRow((short) 3);
         cellB = row3.createCell((short) 2);
         cellB.setCellValue("Môn:");
-        cellC=row3.createCell((short)3);
+        cellC = row3.createCell((short) 3);
         cellC.setCellValue("(Sof302)");
         row4 = sheet.createRow((short) 4);
         cellB = row4.createCell((short) 2);
         cellB.setCellValue("Kỳ:");
-        cellC=row4.createCell((short)3);
+        cellC = row4.createCell((short) 3);
         cellC.setCellValue("Summer 2021");
         row5 = sheet.createRow((short) 6);
         cellB = row5.createCell((short) 0);
@@ -663,13 +657,12 @@ public class DAOkehoachthiimprements implements DAOkehoach {
         cellm = row5.createCell((short) 14);
         cellm.setCellValue("Điểm tổng kết");
         cellm.setCellStyle(style);
-        celln = row5.createCell((short) 15);
-        celln.setCellValue("Trạng thái");
-        celln.setCellStyle(style2);
-        row6=sheet.createRow((short)7);
-        cellB=row6.createCell((short)0);
+        cellre = row5.createCell((short) 15);
+        cellre.setCellValue("Trạng thái");
+        cellre.setCellStyle(style2);
+        row6 = sheet.createRow((short) 7);
+        cellB = row6.createCell((short) 0);
         cellB.setCellValue("nhập dữ liệu bắt đầu từ dòng dưới");
-        workbook.write(excel);
         workbook.write(excel);
         workbook.close();
         excel.close();
@@ -677,7 +670,7 @@ public class DAOkehoachthiimprements implements DAOkehoach {
 
     @Override
     public void xuatfilequizmau(String name) throws Exception {
-        FileOutputStream excel = new FileOutputStream(name + "/maudiemquiz" + ".xlsx");
+        FileOutputStream excel = new FileOutputStream(name + System.getProperty("file.separator") + "maudiemquiz.xlsx");
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("sheet 1");
         XSSFCellStyle style = workbook.createCellStyle();
@@ -713,7 +706,7 @@ public class DAOkehoachthiimprements implements DAOkehoach {
         sheet.setColumnWidth(2, 4000);
         sheet.setRowSumsRight(true);
         style.setFont(f);
-        XSSFRow row1, row2, row3, row4, row5,row6;
+        XSSFRow row1, row2, row3, row4, row5, row6;
         XSSFCell cellB, cellC, cellD, cellE, cellF, cellG, cellH, cellj, cellk, celll, cellr, cellq, celln, cellm;
         row1 = sheet.createRow((short) 1);
         cellB = row1.createCell((short) 3);
@@ -722,17 +715,17 @@ public class DAOkehoachthiimprements implements DAOkehoach {
         row2 = sheet.createRow((short) 2);
         cellB = row2.createCell((short) 2);
         cellB.setCellValue("Lớp:");
-        cellC=row2.createCell((short)3);
+        cellC = row2.createCell((short) 3);
         cellC.setCellValue("IT16305");
         row3 = sheet.createRow((short) 3);
         cellB = row3.createCell((short) 2);
         cellB.setCellValue("Môn:");
-        cellC=row3.createCell((short)3);
+        cellC = row3.createCell((short) 3);
         cellC.setCellValue("(Sof302)");
         row4 = sheet.createRow((short) 4);
         cellB = row4.createCell((short) 2);
         cellB.setCellValue("Kỳ:");
-        cellC=row4.createCell((short)3);
+        cellC = row4.createCell((short) 3);
         cellC.setCellValue("Summer 2021");
         row5 = sheet.createRow((short) 6);
         cellB = row5.createCell((short) 0);
@@ -783,8 +776,8 @@ public class DAOkehoachthiimprements implements DAOkehoach {
         celln = row5.createCell((short) 15);
         celln.setCellValue("Trạng thái");
         celln.setCellStyle(style2);
-        row6=sheet.createRow((short)7);
-        cellB=row6.createCell((short)0);
+        row6 = sheet.createRow((short) 7);
+        cellB = row6.createCell((short) 0);
         cellB.setCellValue("nhập dữ liệu bắt đầu từ dòng dưới");
         workbook.write(excel);
         workbook.close();
@@ -797,10 +790,10 @@ public class DAOkehoachthiimprements implements DAOkehoach {
     }
 
     @Override
-    public void checklichthi(String namefile, int count, ArrayList<Sinhvien> svthi, ArrayList<Sinhvien> svcthi,ArrayList<Inputkehoachthi>dskht) throws Exception {
+    public void checklichthi(String namefile, int count, ArrayList<Sinhvien> svthi, ArrayList<Sinhvien> svcthi, ArrayList<Inputkehoachthi> dskht) throws Exception {
         xuatdskht();
-        ArrayList<Inputkehoachthi> dskh=new ArrayList<>();
-        System.out.println(dskht.size()+"ae");
+        ArrayList<Inputkehoachthi> dskh = new ArrayList<>();
+        dskh.removeAll(dskh);
         for (Sinhvien x : lstsv) {
             for (Inputkehoachthi y : dskht) {
                 if (x.getLop().equalsIgnoreCase(y.getLop()) && x.getMonhoc().equalsIgnoreCase(y.getMamon())) {
@@ -808,7 +801,7 @@ public class DAOkehoachthiimprements implements DAOkehoach {
                 }
             }
         }
-        xuatlichthi(namefile,  count, svthi, svcthi, dskh);
+        xuatlichthi(namefile, count, svthi, svcthi, dskh);
     }
 
     @Override

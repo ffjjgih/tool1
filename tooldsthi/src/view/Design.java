@@ -3,13 +3,11 @@ package view;
 import DAOduan.DAOkehoach;
 import DAOduan.DAOkehoachthiimprements;
 import Model.Inputkehoachthi;
-import Service.Multithread;
 import Service.checksv;
+import java.awt.Dimension;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -18,7 +16,6 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.TransferHandler;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class Design extends javax.swing.JFrame implements Runnable{
 
@@ -32,7 +29,6 @@ public class Design extends javax.swing.JFrame implements Runnable{
         initComponents();
         this.setLocationRelativeTo(null);
         drag_and_drop_file();
-
     }
 
     @SuppressWarnings("unchecked")
@@ -44,6 +40,7 @@ public class Design extends javax.swing.JFrame implements Runnable{
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         cbbmon = new javax.swing.JComboBox<>();
+        lbladdress = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -88,6 +85,10 @@ public class Design extends javax.swing.JFrame implements Runnable{
         cbbmon.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         cbbmon.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "môn online", "môn quiz", "điểm danh" }));
 
+        lbladdress.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        lbladdress.setForeground(new java.awt.Color(0, 0, 255));
+        lbladdress.setText("Địa Chỉ File lưu:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -103,7 +104,8 @@ public class Design extends javax.swing.JFrame implements Runnable{
                         .addGap(126, 126, 126)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnloai1, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE))))
+                            .addComponent(btnloai1, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)))
+                    .addComponent(lbladdress))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -119,6 +121,8 @@ public class Design extends javax.swing.JFrame implements Runnable{
                     .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(pnlfile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(lbladdress)
                 .addContainerGap())
         );
 
@@ -134,11 +138,10 @@ public class Design extends javax.swing.JFrame implements Runnable{
             JOptionPane.showMessageDialog(this, "đọc file thành công");
             try {
                 check.xuatdssthi(namefile.replace(tenfile, ""),dskht);
-                JOptionPane.showMessageDialog(this, "lưu file thành công");
+                this.lbladdress.setText(namefile.replace(tenfile, "")+System.getProperty("file.separator")+"danhsachthi");
             } catch (Exception ex) {
                 ex.printStackTrace();
                 JOptionPane.showMessageDialog(this, "lưu file thất bại");
-
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -177,7 +180,7 @@ public class Design extends javax.swing.JFrame implements Runnable{
 
     private String chonfile() {
         JFileChooser jfc = new JFileChooser();
-        jfc.setSize(13766, 7666);
+        jfc.setPreferredSize(new Dimension(1376,766));
         jfc.setMultiSelectionEnabled(false);
         int ktr = jfc.showDialog(this, "chọn file");
         if (ktr == JFileChooser.APPROVE_OPTION) {
@@ -194,7 +197,6 @@ public class Design extends javax.swing.JFrame implements Runnable{
             public boolean canImport(JComponent comp, DataFlavor[] transferFlavors) {
                 return true;
             }
-
             @Override
             public boolean importData(JComponent comp, Transferable t) {
                 try {
@@ -202,7 +204,6 @@ public class Design extends javax.swing.JFrame implements Runnable{
                     docfile(file);
                         } catch (Exception ex) {
                             ex.printStackTrace();
-                        
                     }
                 return true;
             }
@@ -210,21 +211,51 @@ public class Design extends javax.swing.JFrame implements Runnable{
         pnlfile.setTransferHandler(th);
     }
     
+    /*private void drag_and_drop_file() {
+        TransferHandler th = new TransferHandler() {
+            @Override
+            public boolean canImport(JComponent comp, DataFlavor[] transferFlavors) {
+                return true;
+            }
+            @Override
+            public boolean importData(JComponent comp, Transferable t) {
+                try {
+                    file = (List<File>) t.getTransferData(DataFlavor.javaFileListFlavor);
+                    docfile(file);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                    }
+                return true;
+            }
+        };
+        pnlfile.setTransferHandler(th);
+    }*/
+    
     private void docfile(List<File>f){
         for(File  x:f){
             namefile=x.getAbsolutePath();
             tenfile=x.getName();
-            Thread t=new Thread(this);
-            t.start();
+            try {
+            check.ktramondauvao(namefile,this.cbbmon.getSelectedItem().toString());
+            check.xuatdssthi(namefile.replace(tenfile, ""),dskht);
+            JOptionPane.showMessageDialog(this, "upload "+tenfile+" thành công");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "upload "+tenfile+" thất bại");
+        }
+            /*Thread t=new Thread(this);
+            t.start();*/
         /*Multithread daluong;
             try {
                 daluong = new Multithread(namefile,namefile.replace(tenfile, ""),this.cbbmon.getSelectedItem().toString(),dskht);
                 Thread t=new Thread(daluong);
                         t.start();
+                        //OptionPane.showMessageDialog(this, "đọc file: "+tenfile+"  thành công");
+                        this.lbladdress.setText(namefile.replace(tenfile, "")+System.getProperty("file.separator")+"danhsachthi");
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "không đọc đc file: "+tenfile);
                 ex.printStackTrace();
-            }*/              
+            }      */        
         }
     }
     public static void main(String args[]) {
@@ -264,6 +295,7 @@ public class Design extends javax.swing.JFrame implements Runnable{
     private javax.swing.JComboBox<String> cbbmon;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JLabel lbladdress;
     private javax.swing.JPanel pnlfile;
     // End of variables declaration//GEN-END:variables
 

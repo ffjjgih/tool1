@@ -102,6 +102,8 @@ public class checksv {
     }
     
     private void checkdiemonl(ArrayList<Sinhvien> lst) {
+        lstcamthi.removeAll(lstcamthi);
+        lstthi.removeAll(lstthi);
         for (int i = 0; i < lst.size(); i++) {
             if (lst.get(i).getDiemonl() < 7.5 || lst.get(i).getTinhtrang().equalsIgnoreCase("Attendance failed")) {
                 lstcamthi.add(new Sinhvien(lst.get(i).getDiemonl(), lst.get(i).getTensv(), lst.get(i).getMasv(), "cấm thi",lst.get(i).getLop(),lst.get(i).getMonhoc()));
@@ -112,6 +114,8 @@ public class checksv {
     }
 
     private void checkdiemquiz(ArrayList<Sinhvien> ds) {
+        lstcamthi.removeAll(lstcamthi);
+        lstthi.removeAll(lstthi);
         for (int i = 0; i < ds.size(); i++) {
             if (ds.get(i).getDiemonl() < 80 || ds.get(i).getTinhtrang().equalsIgnoreCase("Attendance failed")) {
                 lstcamthi.add(new Sinhvien(ds.get(i).getDiemonl(), ds.get(i).getTensv(), ds.get(i).getMasv(), "cấm thi",ds.get(i).getLop(),ds.get(i).getMonhoc()));
@@ -122,6 +126,8 @@ public class checksv {
     }
 
     private void checkmondiemdanh(ArrayList<Sinhvien> ds) {
+        lstcamthi.removeAll(lstcamthi);
+        lstthi.removeAll(lstthi);
         for (int i = 0; i < ds.size(); i++) {
             if (ds.get(i).getTinhtrang().equalsIgnoreCase("Attendance failed")) {
                 lstcamthi.add(new Sinhvien(ds.get(i).getDiemonl(), ds.get(i).getTensv(), ds.get(i).getMasv(), "cấm thi",ds.get(i).getLop(),ds.get(i).getMonhoc()));
@@ -140,15 +146,15 @@ public class checksv {
 
     public void xuatdssthi(String namefile,ArrayList<Inputkehoachthi> dskht) throws Exception {
         checksophong();
-        String linkfolder=namefile+"danhsachthi/";
+        String linkfolder=namefile+"danhsachthi";
         System.out.println(dskht.size());
        File f = new File(linkfolder);
        if(f.exists()){
-           ds.checklichthi(f.getAbsolutePath() + "/"+mafile +".xlsx", count, lstthi, lstcamthi,dskht);
-        ds.checklichthi(f.getAbsolutePath() + "/"+mafile +".xlsx", count, lstthi, lstcamthi,dskht);
+           ds.checklichthi(f.getAbsolutePath() + System.getProperty("file.separator")+mafile +".xlsx", count, lstthi, lstcamthi,dskht);
+        ds.checklichthi(f.getAbsolutePath() + System.getProperty("file.separator")+mafile +".xlsx", count, lstthi, lstcamthi,dskht);
        }else{
            if(f.mkdir()){
-               ds.checklichthi(f.getAbsolutePath() + "/"+mafile +".xlsx", count, lstthi, lstcamthi,dskht);
+               ds.checklichthi(f.getAbsolutePath() + System.getProperty("file.separator")+mafile +".xlsx", count, lstthi, lstcamthi,dskht);
            }
        }
     }

@@ -7,8 +7,6 @@ package Service;
 
 import Model.Inputkehoachthi;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -25,9 +23,8 @@ public class Multithread implements Runnable{
         this.ds=ds;
     }
 
-    
     @Override
-    public void run(){
+    public void run() {
         try {
             sv.ktramondauvao(namefile,loaimon);
             sv.xuatdssthi(savefile,ds);
